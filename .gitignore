@@ -1,0 +1,162 @@
+
+# GitIgnore file for parent-module type of repositories:
+#Ignore Idea generated files
+dependency-reduced-pom.xml
+*.iws
+workspace.xml
+tasks.xml
+
+*/.idea
+.idea
+
+*.iml
+*/*.iml
+
+#Old-style Idea project files
+*.ipr
+
+
+#Ignore Maven generated files
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
+
+*/target/
+*/pom.xml.tag
+*/pom.xml.releaseBackup
+*/pom.xml.next
+*/release.properties
+
+#Ignore Eclipse generated files
+bin/**
+tmp/**
+.classpath
+.settings/
+
+# Eclipse project files
+.classpath
+.project
+*/.classpath
+*/.project
+
+#java specific
+*.class
+
+
+#generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+
+#=======
+# packages and binaries:
+*.war
+
+# because they contain machine-dependent info and should not be committed
+*.classpath
+*.settings
+
+# vim temp files:
+*.swp
+
+# mergetool files
+*.orig
+
+# reports
+*.html
+
+# Generated for user in Xcode.
+UserInterfaceState.xcuserstate
+**/*/xcuserdata/*
+
+# directory patterns:
+# never commit binaries, build artifacts, logs or reports:
+.metadata/
+bin/
+target/
+bin/
+logs/
+surefire-reports/
+reports/
+#classes/
+#classes/conf/
+*.class
+
+*/target
+*/.classpath
+*/.settings
+*/test-output
+
+*/*/target
+*/*/.classpath
+*/*/.settings
+*/*/test-output
+
+
+# intellij project files
+*.iml
+*.idea
+.idea
+
+
+# ANDROID-IGNORE
+#built application files
+*.apk
+*.ap_
+*/*.apk
+*/*.ap_
+
+# files for the dex VM
+*.dex
+*/*.dex
+
+# Java class files
+*.class
+*/*.class
+
+# generated files
+bin/
+gen/
+*/bin
+*/gen
+
+# Local configuration file (sdk path, etc)
+local.properties
+*/local.properties
+
+# Windows thumbnail db
+Thumbs.db
+*/Thumbs.db
+
+# OSX files
+.DS_Store
+*/*.DS_Store
+
+
+#Ignore Idea generated files
+*.iws
+*/*.iws
+workspace.xml
+*/workspace.xml
+tasks.xml
+*/tasks.xml
+.idea
+*/.idea
+.gradle
+*.gradle
+build/
+*/build
+
+#Old-style Idea project files
+*.ipr
+
+# ignore pig logs
+*.log*
+*/*.log*
+*/*/*.log*
+*/*/*/*.log*
+
