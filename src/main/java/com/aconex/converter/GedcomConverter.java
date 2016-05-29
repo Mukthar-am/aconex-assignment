@@ -1,7 +1,7 @@
 package com.aconex.converter;
 
 import com.aconex.binders.AconexConverter;
-import com.aconex.binders.RecordProcessor;
+import com.aconex.binders.XMLEntry;
 
 import java.io.*;
 
@@ -52,37 +52,50 @@ public class GedcomConverter implements AconexConverter {
 
         initXML();      /** Initialize xml parent tags */
 
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(INPUT_FILE)));
+        BufferedReader bufferedReader = null;
+        String line, finalLineItem, previousId, currentId;
+        line = finalLineItem = previousId = currentId = null;
 
-            String line;
-            String finalLineItem = "";
+        try {
+            bufferedReader = new BufferedReader(new FileReader(new File(INPUT_FILE)));
+
+            finalLineItem = null;
             while ((line = bufferedReader.readLine()) != null) {
                 String[] lineSplitItems = getLineSplits(line);
 
-                if (lineSplitItems[1].equalsIgnoreCase("birt")
-                    || lineSplitItems[1].equalsIgnoreCase("chan")
-                    || lineSplitItems[1].equalsIgnoreCase("date")
-                    || lineSplitItems[1].equalsIgnoreCase("plac") ) {
+                if (Integer.parseInt(lineSplitItems[0]) == 0) {
+                    previousId = currentId;
+                    currentId = lineSplitItems[1];
 
-                    finalLineItem += line + "\n";
+                    if (previousId != currentId && finalLineItem != null) {
+                        XMLEntry xmlEntry = new XMLEntry(finalLineItem);
 
-                } else {
-                    if (!finalLineItem.isEmpty()) {
-                        OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
-                        OUT_XML.append("\n" + RecordProcessor.process(line));
                         finalLineItem = "";
-
-                    } else {
-                        OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
                     }
                 }
 
+                finalLineItem += line + "\n";
+
             }
+
 
         } catch (IOException e) {
             e.printStackTrace();
 
+        } finally {
+            try {
+                bufferedReader.close();     /** Close the bufferred reader object */
+
+//                /** Case: where last line can be either birth or chan */
+//                if (!finalLineItem.isEmpty()) {
+//                    OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
+//                }
+//                if (line != null) {
+//                    OUT_XML.append("\n" + RecordProcessor.process(line));
+//                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -99,14 +112,13 @@ public class GedcomConverter implements AconexConverter {
     }
 
 
-
     private static boolean lineAppendRequest(String input) {
         String[] lineItems = input.split("\\s");
 
         return (
             lineItems[1].equalsIgnoreCase("birt")
-            || lineItems[1].equalsIgnoreCase("chan")
-            || Integer.parseInt(lineItems[0]) >= 2
+                || lineItems[1].equalsIgnoreCase("chan")
+                || Integer.parseInt(lineItems[0]) >= 2
         );
     }
 

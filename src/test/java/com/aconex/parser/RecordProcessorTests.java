@@ -7,6 +7,12 @@ package com.aconex.parser;
  */
 public class RecordProcessorTests {
 
+    /** Case: where last line can be either birth or chan
+     * I/p Data:
+     * 1 CHAN
+     2 DATE 13 Dec 2003
+     * */
+
 
     /** test process ID extractor
      private static String extractId(String input) {
