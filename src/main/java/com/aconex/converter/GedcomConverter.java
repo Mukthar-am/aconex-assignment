@@ -58,17 +58,26 @@ public class GedcomConverter implements AconexConverter {
             String line;
             String finalLineItem = "";
             while ((line = bufferedReader.readLine()) != null) {
+                String[] lineSplitItems = getLineSplits(line);
 
-                if (lineAppendRequest(line)) {
-                    System.out.println("true");
+                if (lineSplitItems[1].equalsIgnoreCase("birt")
+                    || lineSplitItems[1].equalsIgnoreCase("chan")
+                    || lineSplitItems[1].equalsIgnoreCase("date")
+                    || lineSplitItems[1].equalsIgnoreCase("plac") ) {
+
                     finalLineItem += line + "\n";
 
                 } else {
-                    finalLineItem += line;
-                    OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
+                    if (!finalLineItem.isEmpty()) {
+                        OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
+                        OUT_XML.append("\n" + RecordProcessor.process(line));
+                        finalLineItem = "";
 
-                    finalLineItem = "";
+                    } else {
+                        OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
+                    }
                 }
+
             }
 
         } catch (IOException e) {
@@ -85,9 +94,10 @@ public class GedcomConverter implements AconexConverter {
     }
 
 
-    private static void keepAppending() {
-
+    private static String[] getLineSplits(String input) {
+        return input.split("\\s");
     }
+
 
 
     private static boolean lineAppendRequest(String input) {

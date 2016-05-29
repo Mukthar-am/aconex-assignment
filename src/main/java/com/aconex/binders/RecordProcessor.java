@@ -5,14 +5,28 @@ import java.util.regex.Pattern;
 
 /**
  * Created by mukthar.ahmed on 5/29/16.
+ * <p>
+ * Record parser customization.
  */
 public class RecordProcessor {
 
     public static String process(String input) {
+        //System.out.println("\nInput String = " + input + "\n");
 
-        System.out.println("\nInput String = " + input + "\n");
-        System.out.println("Total Lines = " + countLines(input) );
+        if (getSubRecordDetails(input).length == 1) {
+            return singleRecordParser(input);
+        } else {
+            return multiRecordParser(input);
+        }
+    }
 
+
+    /**
+     *  => Single line record input set parser
+     * @param input
+     * @return
+     */
+    private static String singleRecordParser(String input) {
         StringBuilder xmlTagLine = new StringBuilder();
 
         String[] lineItems = input.split("\\s");
@@ -25,22 +39,14 @@ public class RecordProcessor {
         }
 
         String recordValue = sb.toString();
-//        System.out.println("TabSpaces = " + tabSpaces
-//            + ", Key = " + recordKey
-//            + ", Value = " + recordValue);
 
-
-        String totalTabs = "";
-        for (int space = 0; space <= tabSpaces; space++) {
-            totalTabs += "\t";
-        }
+        String totalTabs = getTabbedString(tabSpaces);  /** Get tab spaced string */
 
         if (recordKey.startsWith("@I")) {
             xmlTagLine.append("<" + recordValue.toLowerCase() + " id=\"@I" + extractId(recordKey) + "@\">\n");
 
         } else {
             /** Using switch to make the code look clean */
-
             switch (recordKey.toLowerCase()) {
                 case "name":
                     xmlTagLine.append(totalTabs + "<name value=\"" + recordValue + ">\n");
@@ -52,10 +58,6 @@ public class RecordProcessor {
 
                 case "sex":
                     xmlTagLine.append(totalTabs + "<sex>" + recordValue + "<sex>\n");
-                    break;
-
-                case "birt":
-                    xmlTagLine.append(totalTabs + "<birth>" + recordValue + "</birth>\n");
                     break;
 
                 case "occu":
@@ -78,27 +80,92 @@ public class RecordProcessor {
                     xmlTagLine.append(totalTabs + "<note>" + recordValue + "</note>\n");
                     break;
 
-                case "chan":
-                    xmlTagLine.append(totalTabs + "<chan>" + recordValue + "</chan>\n");
-                    break;
-
                 default:
                     xmlTagLine.append("");
                     break;
             }
         }
 
-        System.out.print(xmlTagLine);
+        System.out.println(xmlTagLine.toString());
+
+        return xmlTagLine.toString();
+
+    }
+
+
+    /**
+     *  => Multi line record input set parser
+     * @param input
+     * @return
+     */
+    private static String multiRecordParser(String input) {
+        StringBuilder xmlTagLine = new StringBuilder();
+
+        String[] allSubRecords = getSubRecordDetails(input);
+        for (String subRecord : allSubRecords) {
+
+            String[] lineItems = subRecord.split("\\s");
+            Integer tabSpaces = Integer.parseInt(lineItems[0]);
+            String recordKey = lineItems[1];
+
+            StringBuffer sb = new StringBuffer();
+            for (int i = 2; i < lineItems.length; i++) {
+                sb.append(lineItems[i]);
+            }
+            String recordValue = sb.toString();     /** Complete record value string */
+
+            String totalTabs = getTabbedString(tabSpaces);  /** Tab spaced string */
+
+            if (recordKey.startsWith("@I")) {
+                xmlTagLine.append("<" + recordValue.toLowerCase() + " id=\"@I" + extractId(recordKey) + "@\">\n");
+
+            } else {
+                /** Using switch to make the code look clean */
+                switch (recordKey.toLowerCase()) {
+                    case "birt":
+                        xmlTagLine.append(totalTabs + "\t<birth>" + recordValue + "</birth>\n");
+                        break;
+
+                    case "date":
+                        xmlTagLine.append(totalTabs + "\t<date>" + recordValue + "</date>\n");
+                        break;
+
+                    case "plac":
+                        xmlTagLine.append(totalTabs + "\t<place>" + recordValue + "</place>\n");
+                        break;
+
+                    case "chan":
+                        xmlTagLine.append(totalTabs + "<chan>" + recordValue + "</chan>\n");
+                        break;
+
+                    default:
+                        xmlTagLine.append("");
+                        break;
+                }
+            }
+
+        }
+        System.out.println(xmlTagLine.toString());
 
         return xmlTagLine.toString();
     }
 
-
+    /**
+     *  => Extract Record ID
+     * @param input
+     * @return
+     */
     private static String extractId(String input) {
         Integer ID = Integer.parseInt(input.substring(2, input.length() - 1));
         return String.format("%01d", ID);
     }
 
+
+    /**
+     *  => Extract SirName string from input
+     * @param text
+     * @return
+     */
     private static String extractSirName(String text) {
         String regEx = "/(.*?)/";
         Pattern pattern = Pattern.compile(regEx);
@@ -112,6 +179,12 @@ public class RecordProcessor {
         return null;
     }
 
+
+    /**
+     *  => Extract Name string from input
+     * @param text
+     * @return
+     */
     private static String extractName(String text) {
         String regEx = "(.*?)/(.*?)/$";
         Pattern pattern = Pattern.compile(regEx);
@@ -126,12 +199,35 @@ public class RecordProcessor {
     }
 
 
-    private static int countLines(String input) {
-        String[] lines = input.split("\r\n|\n|\r");
-        return lines.length;
+    /**
+     *  => Get sub records from multi line record set
+     * @param input
+     * @return
+     */
+    private static String[] getSubRecordDetails(String input) {
+        return input.split("\r\n|\n|\r");
     }
 
 
+    /**
+     *  => For generating tab spaced string
+     * @param tabSpaces
+     * @return
+     */
+    private static String getTabbedString(int tabSpaces) {
+        String totalTabs = "";
+        for (int space = 0; space <= tabSpaces; space++) {
+            totalTabs += "\t";
+        }
+
+        return totalTabs;
+    }
+
+
+    /**
+     * => Testing purpose
+     * @param args
+     */
     public static void main(String[] args) {
         String input = "Elizabeth Alexandra Mary /Windsor/";
 
