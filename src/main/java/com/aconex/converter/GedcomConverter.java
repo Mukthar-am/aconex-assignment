@@ -59,7 +59,7 @@ public class GedcomConverter implements AconexConverter {
         try {
             bufferedReader = new BufferedReader(new FileReader(new File(INPUT_FILE)));
 
-            finalLineItem = null;
+            finalLineItem = "";
             while ((line = bufferedReader.readLine()) != null) {
                 String[] lineSplitItems = getLineSplits(line);
 
@@ -67,7 +67,7 @@ public class GedcomConverter implements AconexConverter {
                     previousId = currentId;
                     currentId = lineSplitItems[1];
 
-                    if (previousId != currentId && finalLineItem != null) {
+                    if (!finalLineItem.isEmpty() && previousId != currentId) {
                         XMLEntry xmlEntry = new XMLEntry(finalLineItem);
 
                         finalLineItem = "";

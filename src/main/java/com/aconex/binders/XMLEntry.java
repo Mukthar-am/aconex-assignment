@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class XMLEntry {
 
-    RawEntryRecord record;
+    RawEntryRecord rawEntryRecord;
 
     private String ID;
     private String NAME;
@@ -24,16 +24,66 @@ public class XMLEntry {
         String[] tagLines = getSubRecordDetails(xmlLineSet);
 
         for (String line : tagLines) {
-            RawEntryRecord rawEntryRecord = new RawEntryRecord(line);
+            rawEntryRecord = new RawEntryRecord(line);
 
             if (rawEntryRecord.recordKey.startsWith("@I")) {
+                this.ID = rawEntryRecord.recordKey;
+
                 System.out.print(
                     "<" + rawEntryRecord.recordValue.toLowerCase()
-                        + " id=\"@I" + extractId(rawEntryRecord.recordKey) + "@\">\n"
+                        + " id=\"@I" + this.ID + "\">\n"
                 );
 
             }
 
+            /** Using switch to make the code look clean */
+            switch (rawEntryRecord.recordKey.toLowerCase()) {
+                case "name":
+                    setName();
+                    break;
+
+                case "sex":
+                    setSex();
+                    break;
+
+                case "occu":
+                    setOccupation();
+                    break;
+
+                case "title":
+                    setTitle();
+                    break;
+
+                case "fams":
+                    setFams();
+                    break;
+
+                case "famc":
+                    setFamc();
+                    break;
+
+                case "note":
+                    setNote();
+                    break;
+
+                case "birt":
+                    setBirthDetails();
+                    break;
+
+                case "date":
+                    setDate();
+                    break;
+
+                case "plac":
+                    setPlace();
+                    break;
+
+                case "chan":
+                    setChan();
+                    break;
+
+
+            }
 
             if (rawEntryRecord.recordKey.equalsIgnoreCase("birt")
                 || rawEntryRecord.recordKey.equalsIgnoreCase("chan")
@@ -43,53 +93,74 @@ public class XMLEntry {
                 finalLineItem += line + "\n";
 
             } else {
-                if (!finalLineItem.isEmpty()) {
-                    OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
-                    finalLineItem = "";
-                }
-                if (!line.isEmpty()) {
-                    OUT_XML.append("\n" + RecordProcessor.process(line));
-                }
+//                if (!finalLineItem.isEmpty()) {
+//                    OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
+//                    finalLineItem = "";
+//                }
+//                if (!line.isEmpty()) {
+//                    OUT_XML.append("\n" + RecordProcessor.process(line));
+//                }
 
             }
 
         }
 
+        System.out.print("</indi>\n");
+
+    }
+
 
     public void setId(String inId) {
         this.ID = (
-            "<" + record.recordValue.toLowerCase() + " id=\"@I" + extractId(record.recordKey) + "@\">\n");
+            "<" + rawEntryRecord.recordValue.toLowerCase() + " id=\"@I" + extractId(rawEntryRecord.recordKey) + "@\">\n");
     }
 
-
-    public void setName(String inName) {
-        this.NAME = inName;
-
-
-//        xmlTagLine.append(totalTabs + "<name value=\"" + recordValue + ">\n");
-//        xmlTagLine.append(totalTabs + "\t<surn>\"" + extractSirName(recordValue) + "</surn>\n");
-//        xmlTagLine.append(totalTabs + "\t<givn>\"" + extractName(recordValue) + "</givn>\n");
-//        xmlTagLine.append(totalTabs + "</name" + ">\n");
+    private void setNote() {
+        System.out.print(rawEntryRecord.totalTabs + "<note>" + rawEntryRecord.recordValue + "</note>\n");
     }
 
-    public void setSex(String inSex) {
-        this.SEX = inSex;
+    public void setName() {
+        System.out.print(rawEntryRecord.totalTabs + "<name value=\"" + rawEntryRecord.recordValue + ">\n");
+        System.out.print(rawEntryRecord.totalTabs + "\t<surn>\"" + RecordProcessor.extractSirName(rawEntryRecord.recordValue) + "</surn>\n");
+        System.out.print(rawEntryRecord.totalTabs + "\t<givn>\"" + RecordProcessor.extractName(rawEntryRecord.recordValue) + "</givn>\n");
+        System.out.print(rawEntryRecord.totalTabs + "</name" + ">\n");
+
     }
 
-    public void setTitle(String inTitle) {
-        this.TITLE = inTitle;
+    public void setSex() {
+        System.out.print(rawEntryRecord.totalTabs + "<sex>" + this.rawEntryRecord.recordValue + "<sex>\n");
     }
 
-    public void setBirthDetails(String inId) {
+    public void setOccupation() {
+        System.out.print(rawEntryRecord.totalTabs + "<occu>" + rawEntryRecord.recordValue + "</occu>\n");
+    }
+
+    public void setTitle() {
+        System.out.print(rawEntryRecord.totalTabs + "<title>" + rawEntryRecord.recordValue + "</title>\n");
+    }
+
+    public void setBirthDetails() {
         this.BIRTH_DETAILS = new HashMap<>();
+        System.out.print(rawEntryRecord.totalTabs + "<birth>\n");
     }
 
-    public void setFamc(String inFamc) {
-        this.FAMC = inFamc;
+    public void setPlace() {
+        System.out.print(rawEntryRecord.totalTabs + "<place>" + rawEntryRecord.recordValue + "</place>\n");
     }
 
-    public void setFams(String inFams) {
-        this.FAMS = inFams;
+    public void setChan(){
+        System.out.print(rawEntryRecord.totalTabs + "<chan>\n");
+    }
+
+    public void setDate() {
+        System.out.print(rawEntryRecord.totalTabs + "<date>" + rawEntryRecord.recordValue + "</date>\n");
+    }
+    public void setFamc() {
+        System.out.print(rawEntryRecord.totalTabs + "<famc>" + rawEntryRecord.recordValue + "</famc>\n");
+    }
+
+    public void setFams() {
+        System.out.print(rawEntryRecord.totalTabs + "<fams>" + rawEntryRecord.recordValue + "</fams>\n");
     }
 
     public void setCham(String inChan) {
