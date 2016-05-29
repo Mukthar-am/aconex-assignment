@@ -1,14 +1,15 @@
 package com.aconex.converter;
 
 import com.aconex.binders.AconexConverter;
+import com.aconex.binders.RecordProcessor;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 /**
  * Text file to XML AconexConverter
  */
 public class GedcomConverter implements AconexConverter {
+
     private String INPUT_FILE;
     /**
      * Input file to parse
@@ -33,23 +34,89 @@ public class GedcomConverter implements AconexConverter {
      */
     private void initXML() {
         OUT_XML.append("<gedcom>");
+        System.out.println("<gedcom>");
     }
 
     private void closeXML() {
-        OUT_XML.append("</gedcom>");
+        OUT_XML.append("\n</gedcom>");
+        System.out.println("\n</gedcom>");
+
     }
 
     public boolean doXML() throws FileNotFoundException {
         if (!new File(INPUT_FILE).exists()) {
             throw new FileNotFoundException("# Input file \"" + INPUT_FILE + "\" NOT found");
         }
+
         boolean isSuccessful = false;
 
-        initXML();
+        initXML();      /** Initialize xml parent tags */
+
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(INPUT_FILE)));
+
+            String line;
+            String finalLineItem = "";
+            while ((line = bufferedReader.readLine()) != null) {
+
+                if (lineAppendRequest(line)) {
+                    System.out.println("true");
+                    finalLineItem += line + "\n";
+
+                } else {
+                    finalLineItem += line;
+                    OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
+
+                    finalLineItem = "";
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
 
 
         closeXML();     /** Close xml file object */
 
+        //System.out.println(OUT_XML.toString());
+
         return isSuccessful;
+    }
+
+
+    private static void keepAppending() {
+
+    }
+
+
+    private static boolean lineAppendRequest(String input) {
+        String[] lineItems = input.split("\\s");
+
+        return (
+            lineItems[1].equalsIgnoreCase("birt")
+            || lineItems[1].equalsIgnoreCase("chan")
+            || Integer.parseInt(lineItems[0]) >= 2
+        );
+    }
+
+    /**
+     * Check if the flow has to wait for next line
+     */
+    private boolean waitForNext(String line) {
+        String[] lineItems = line.split("\\s");
+        return (Integer.parseInt(lineItems[0]) == 2);
+    }
+
+
+    public static void main(String[] args) {
+        String inFile = "/Users/mukthar.ahmed/Downloads/aconex-coding-challenge/GEDCOM_Parser_Coding_Challenge/limited_data_set.txt";
+        GedcomConverter converter = new GedcomConverter(inFile);
+        try {
+            converter.doXML();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
