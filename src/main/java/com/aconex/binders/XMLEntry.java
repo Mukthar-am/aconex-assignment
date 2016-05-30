@@ -1,22 +1,18 @@
 package com.aconex.binders;
 
 
-
 /**
  * Created by mukthar.ahmed on 5/29/16.
  *
  *  Generating xml entry object
  */
 public class XMLEntry {
-
     private RawEntryRecord rawEntryRecord;
-
     private String ID;
-
     private StringBuilder XML_TAG = new StringBuilder();
 
+    /** Constructor - with entire parsing logic */
     public XMLEntry(String xmlLineSet) {
-
         String finalLineItem = "";
         String[] tagLines = getSubRecordDetails(xmlLineSet);
 
@@ -26,13 +22,7 @@ public class XMLEntry {
             rawEntryRecord = new RawEntryRecord(line);
 
             if (rawEntryRecord.recordKey.startsWith("@I")) {
-                this.ID = rawEntryRecord.recordKey;
-
-                XML_TAG.append(
-                    "\t<" + rawEntryRecord.recordValue.toLowerCase()
-                        + " id=\"@I" + this.ID + "\">\n"
-                );
-
+                setId(rawEntryRecord);
             }
 
             if (rawEntryRecord.recordKey.equalsIgnoreCase("birt")
@@ -50,8 +40,8 @@ public class XMLEntry {
                         }
                     }
                 }
-                continue;
 
+                continue;   /** jump to the next line */
             }
 
 
@@ -97,8 +87,6 @@ public class XMLEntry {
                     setNote();
                     break;
             }
-
-
         }
 
         XML_TAG.append("\t</indi>\n");
@@ -106,9 +94,12 @@ public class XMLEntry {
     }
 
 
-    public void setId(String inId) {
-        this.ID = (
-            "<" + rawEntryRecord.recordValue.toLowerCase() + " id=\"@I" + extractId(rawEntryRecord.recordKey) + "@\">\n");
+    public void setId(RawEntryRecord entryRecord) {
+        this.ID = RecordProcessor.extractId(entryRecord.recordKey);
+        XML_TAG.append(
+            "\t<" + rawEntryRecord.recordValue.toLowerCase()
+                + " id=\"@I" + this.ID + "@\">\n"
+        );
     }
 
     private void setNote() {
@@ -191,37 +182,6 @@ public class XMLEntry {
         return this.XML_TAG.toString();
     }
 
-//    public String getId() {
-//        return ID;
-//    }
-//
-//    public String getName() {
-//        return this.NAME;
-//    }
-//
-//    public String getSex() {
-//        return this.SEX;
-//    }
-//
-//    public String getTitle() {
-//        return this.TITLE;
-//    }
-//
-//    public HashMap<String, String> getBirthDetails() {
-//        return BIRTH_DETAILS;
-//    }
-//
-//    public String getFamc() {
-//        return this.FAMC;
-//    }
-//
-//    public String getFams() {
-//        return this.FAMS;
-//    }
-//
-//    public String getCham() {
-//        return this.CHAN;
-//    }
 
     /**
      * => Extract Record ID
