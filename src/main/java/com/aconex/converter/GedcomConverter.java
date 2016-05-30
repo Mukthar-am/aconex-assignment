@@ -33,14 +33,11 @@ public class GedcomConverter implements AconexConverter {
      * Initializer, throwing FileNotFoundException if input does not exists else continue
      */
     private void initXML() {
-        OUT_XML.append("<gedcom>");
-        System.out.println("<gedcom>");
+        OUT_XML.append("<gedcom>\n");
     }
 
     private void closeXML() {
-        OUT_XML.append("\n</gedcom>");
-        System.out.println("\n</gedcom>");
-
+        OUT_XML.append("</gedcom>");
     }
 
     public boolean doXML() throws FileNotFoundException {
@@ -54,13 +51,14 @@ public class GedcomConverter implements AconexConverter {
 
         BufferedReader bufferedReader = null;
         String line, finalLineItem, previousId, currentId;
-        line = finalLineItem = previousId = currentId = null;
+        finalLineItem = previousId = currentId = null;
 
         try {
             bufferedReader = new BufferedReader(new FileReader(new File(INPUT_FILE)));
 
             finalLineItem = "";
             while ((line = bufferedReader.readLine()) != null) {
+
                 String[] lineSplitItems = getLineSplits(line);
 
                 if (Integer.parseInt(lineSplitItems[0]) == 0) {
@@ -68,14 +66,12 @@ public class GedcomConverter implements AconexConverter {
                     currentId = lineSplitItems[1];
 
                     if (!finalLineItem.isEmpty() && previousId != currentId) {
-                        XMLEntry xmlEntry = new XMLEntry(finalLineItem);
-
+                        OUT_XML.append(new XMLEntry(finalLineItem).xmlTag());
                         finalLineItem = "";
                     }
                 }
 
                 finalLineItem += line + "\n";
-
             }
 
 
@@ -85,49 +81,22 @@ public class GedcomConverter implements AconexConverter {
         } finally {
             try {
                 bufferedReader.close();     /** Close the bufferred reader object */
+                OUT_XML.append(new XMLEntry(finalLineItem).xmlTag());
 
-//                /** Case: where last line can be either birth or chan */
-//                if (!finalLineItem.isEmpty()) {
-//                    OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
-//                }
-//                if (line != null) {
-//                    OUT_XML.append("\n" + RecordProcessor.process(line));
-//                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-
         closeXML();     /** Close xml file object */
 
-        //System.out.println(OUT_XML.toString());
-
+        System.out.println(OUT_XML.toString());
         return isSuccessful;
     }
 
 
     private static String[] getLineSplits(String input) {
         return input.split("\\s");
-    }
-
-
-    private static boolean lineAppendRequest(String input) {
-        String[] lineItems = input.split("\\s");
-
-        return (
-            lineItems[1].equalsIgnoreCase("birt")
-                || lineItems[1].equalsIgnoreCase("chan")
-                || Integer.parseInt(lineItems[0]) >= 2
-        );
-    }
-
-    /**
-     * Check if the flow has to wait for next line
-     */
-    private boolean waitForNext(String line) {
-        String[] lineItems = line.split("\\s");
-        return (Integer.parseInt(lineItems[0]) == 2);
     }
 
 

@@ -41,35 +41,35 @@ public class RecordProcessor {
 //            /** Using switch to make the code look clean */
 //            switch (recordKey.toLowerCase()) {
 //                case "name":
-//                    xmlTagLine.append(totalTabs + "<name value=\"" + recordValue + ">\n");
-//                    xmlTagLine.append(totalTabs + "\t<surn>\"" + extractSirName(recordValue) + "</surn>\n");
-//                    xmlTagLine.append(totalTabs + "\t<givn>\"" + extractName(recordValue) + "</givn>\n");
-//                    xmlTagLine.append(totalTabs + "</name" + ">\n");
+//                    xmlTagLine.append(tabSpacedString + "<name value=\"" + recordValue + ">\n");
+//                    xmlTagLine.append(tabSpacedString + "\t<surn>\"" + extractSirName(recordValue) + "</surn>\n");
+//                    xmlTagLine.append(tabSpacedString + "\t<givn>\"" + extractName(recordValue) + "</givn>\n");
+//                    xmlTagLine.append(tabSpacedString + "</name" + ">\n");
 //
 //                    break;
 //
 //                case "sex":
-//                    xmlTagLine.append(totalTabs + "<sex>" + recordValue + "<sex>\n");
+//                    xmlTagLine.append(tabSpacedString + "<sex>" + recordValue + "<sex>\n");
 //                    break;
 //
 //                case "occu":
-//                    xmlTagLine.append(totalTabs + "<occu>" + recordValue + "</occu>\n");
+//                    xmlTagLine.append(tabSpacedString + "<occu>" + recordValue + "</occu>\n");
 //                    break;
 //
 //                case "title":
-//                    xmlTagLine.append(totalTabs + "<title>" + recordValue + "</title>\n");
+//                    xmlTagLine.append(tabSpacedString + "<title>" + recordValue + "</title>\n");
 //                    break;
 //
 //                case "fams":
-//                    xmlTagLine.append(totalTabs + "<fams>" + recordValue + "</fams>\n");
+//                    xmlTagLine.append(tabSpacedString + "<fams>" + recordValue + "</fams>\n");
 //                    break;
 //
 //                case "famc":
-//                    xmlTagLine.append(totalTabs + "<famc>" + recordValue + "</famc>\n");
+//                    xmlTagLine.append(tabSpacedString + "<famc>" + recordValue + "</famc>\n");
 //                    break;
 //
 //                case "note":
-//                    xmlTagLine.append(totalTabs + "<note>" + recordValue + "</note>\n");
+//                    xmlTagLine.append(tabSpacedString + "<note>" + recordValue + "</note>\n");
 //                    break;
 //
 //                default:
@@ -93,7 +93,7 @@ public class RecordProcessor {
 //    private static String multiRecordParser(String input) {
 //        StringBuilder xmlTagLine = new StringBuilder();
 //
-//        String totalTabs = null;
+//        String tabSpacedString = null;
 //        String[] allSubRecords = getSubRecordDetails(input);
 //        for (String subRecord : allSubRecords) {
 //
@@ -107,7 +107,7 @@ public class RecordProcessor {
 //            }
 //            String recordValue = sb.toString();     /** Complete record value string */
 //
-//            totalTabs = getTabbedString(tabSpaces);  /** Tab spaced string */
+//            tabSpacedString = getTabbedString(tabSpaces);  /** Tab spaced string */
 //
 //            if (recordKey.startsWith("@I")) {
 //                xmlTagLine.append("<" + recordValue.toLowerCase() + " id=\"@I" + extractId(recordKey) + "@\">\n");
@@ -116,19 +116,19 @@ public class RecordProcessor {
 //                /** Using switch to make the code look clean */
 //                switch (recordKey.toLowerCase()) {
 //                    case "birt":
-//                        xmlTagLine.append(totalTabs + "<birth>\n");
+//                        xmlTagLine.append(tabSpacedString + "<birth>\n");
 //                        break;
 //
 //                    case "date":
-//                        xmlTagLine.append(totalTabs + "<date>" + recordValue + "</date>\n");
+//                        xmlTagLine.append(tabSpacedString + "<date>" + recordValue + "</date>\n");
 //                        break;
 //
 //                    case "plac":
-//                        xmlTagLine.append(totalTabs + "<place>" + recordValue + "</place>\n");
+//                        xmlTagLine.append(tabSpacedString + "<place>" + recordValue + "</place>\n");
 //                        break;
 //
 //                    case "chan":
-//                        xmlTagLine.append(totalTabs + "<chan>\n");
+//                        xmlTagLine.append(tabSpacedString + "<chan>\n");
 //                        break;
 
 //                    default:
@@ -140,9 +140,9 @@ public class RecordProcessor {
 //        }
 //
 //        if (allSubRecords[0].split("\\s")[1].equalsIgnoreCase("birt")) {
-//            xmlTagLine.append(totalTabs + "</birth>");
+//            xmlTagLine.append(tabSpacedString + "</birth>");
 //        } else {
-//            xmlTagLine.append(totalTabs + "</chan>");
+//            xmlTagLine.append(tabSpacedString + "</chan>");
 //        }
 //
 //        System.out.println(xmlTagLine.toString());

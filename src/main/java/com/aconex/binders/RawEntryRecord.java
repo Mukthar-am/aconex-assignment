@@ -2,6 +2,8 @@ package com.aconex.binders;
 
 /**
  * Created by mukthar.ahmed on 5/30/16.
+ *
+ *  - Entry level parser
  */
 public class RawEntryRecord {
 
@@ -9,7 +11,7 @@ public class RawEntryRecord {
     public String[] lineItems;
     public String recordKey;
     public String recordValue;
-    public String totalTabs;
+    public String tabSpacedString;
 
     public RawEntryRecord(String line) {
         this.lineItems = line.split("\\s");
@@ -19,10 +21,13 @@ public class RawEntryRecord {
         StringBuffer sb = new StringBuffer();
         for (int i = 2; i < lineItems.length; i++) {
             sb.append(lineItems[i]);
+            if (i != lineItems.length-1) {
+                sb.append(" ");
+            }
         }
 
         this.recordValue = sb.toString();
-        this.totalTabs = getTabbedString(tabSpaces);  /** Get tab spaced string */
+        getTabbedString(tabSpaces);  /** Get tab spaced string */
     }
 
     /**
@@ -30,12 +35,11 @@ public class RawEntryRecord {
      * @param tabSpaces
      * @return
      */
-    private static String getTabbedString(int tabSpaces) {
-        String totalTabs = "";
+    private void getTabbedString(int tabSpaces) {
+        String totalTabs = "\t";
         for (int space = 0; space < tabSpaces; space++) {
             totalTabs += "\t";
         }
-
-        return totalTabs;
+        this.tabSpacedString = totalTabs;
     }
 }

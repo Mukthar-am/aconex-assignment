@@ -1,40 +1,71 @@
 package com.aconex.binders;
 
-import java.util.HashMap;
+
 
 /**
  * Created by mukthar.ahmed on 5/29/16.
+ *
+ *  Generating xml entry object
  */
 public class XMLEntry {
 
-    RawEntryRecord rawEntryRecord;
+    private RawEntryRecord rawEntryRecord;
 
     private String ID;
-    private String NAME;
-    private String SEX;
-    private HashMap<String, String> BIRTH_DETAILS;
-    private String TITLE;
-    private String FAMC;
-    private String FAMS;
-    private String CHAN;
+
+    private StringBuilder XML_TAG = new StringBuilder();
 
     public XMLEntry(String xmlLineSet) {
 
-        String finalLineItem = null;
+        String finalLineItem = "";
         String[] tagLines = getSubRecordDetails(xmlLineSet);
 
-        for (String line : tagLines) {
+        for (int i = 0; i < tagLines.length; i++) {
+            String line = tagLines[i];
+
             rawEntryRecord = new RawEntryRecord(line);
 
             if (rawEntryRecord.recordKey.startsWith("@I")) {
                 this.ID = rawEntryRecord.recordKey;
 
-                System.out.print(
-                    "<" + rawEntryRecord.recordValue.toLowerCase()
+                XML_TAG.append(
+                    "\t<" + rawEntryRecord.recordValue.toLowerCase()
                         + " id=\"@I" + this.ID + "\">\n"
                 );
 
             }
+
+            if (rawEntryRecord.recordKey.equalsIgnoreCase("birt")
+                || rawEntryRecord.recordKey.equalsIgnoreCase("chan")
+                || rawEntryRecord.recordKey.equalsIgnoreCase("date")
+                || rawEntryRecord.recordKey.equalsIgnoreCase("plac")) {
+
+
+                finalLineItem += line + "\n";
+
+                if (i == tagLines.length - 1) {
+                    if (!finalLineItem.isEmpty()) {
+                        if (finalLineItem.toLowerCase().contains("chan")) {
+                            setChan(finalLineItem);
+                        }
+                    }
+                }
+                continue;
+
+            }
+
+
+            if (!finalLineItem.isEmpty()) {
+                if (finalLineItem.toLowerCase().contains("birt")) {
+                    setBirthDetails(finalLineItem);
+                }
+
+                if (finalLineItem.toLowerCase().contains("chan")) {
+                    setChan(finalLineItem);
+                }
+            }
+
+            finalLineItem = "";
 
             /** Using switch to make the code look clean */
             switch (rawEntryRecord.recordKey.toLowerCase()) {
@@ -65,47 +96,12 @@ public class XMLEntry {
                 case "note":
                     setNote();
                     break;
-
-                case "birt":
-                    setBirthDetails();
-                    break;
-
-                case "date":
-                    setDate();
-                    break;
-
-                case "plac":
-                    setPlace();
-                    break;
-
-                case "chan":
-                    setChan();
-                    break;
-
-
             }
 
-            if (rawEntryRecord.recordKey.equalsIgnoreCase("birt")
-                || rawEntryRecord.recordKey.equalsIgnoreCase("chan")
-                || rawEntryRecord.recordKey.equalsIgnoreCase("date")
-                || rawEntryRecord.recordKey.equalsIgnoreCase("plac")) {
-
-                finalLineItem += line + "\n";
-
-            } else {
-//                if (!finalLineItem.isEmpty()) {
-//                    OUT_XML.append("\n" + RecordProcessor.process(finalLineItem));
-//                    finalLineItem = "";
-//                }
-//                if (!line.isEmpty()) {
-//                    OUT_XML.append("\n" + RecordProcessor.process(line));
-//                }
-
-            }
 
         }
 
-        System.out.print("</indi>\n");
+        XML_TAG.append("\t</indi>\n");
 
     }
 
@@ -116,92 +112,116 @@ public class XMLEntry {
     }
 
     private void setNote() {
-        System.out.print(rawEntryRecord.totalTabs + "<note>" + rawEntryRecord.recordValue + "</note>\n");
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "<note>" + rawEntryRecord.recordValue + "</note>\n");
     }
 
     public void setName() {
-        System.out.print(rawEntryRecord.totalTabs + "<name value=\"" + rawEntryRecord.recordValue + ">\n");
-        System.out.print(rawEntryRecord.totalTabs + "\t<surn>\"" + RecordProcessor.extractSirName(rawEntryRecord.recordValue) + "</surn>\n");
-        System.out.print(rawEntryRecord.totalTabs + "\t<givn>\"" + RecordProcessor.extractName(rawEntryRecord.recordValue) + "</givn>\n");
-        System.out.print(rawEntryRecord.totalTabs + "</name" + ">\n");
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "<name value=\"" + rawEntryRecord.recordValue + ">\n");
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "\t<surn>\"" + RecordProcessor.extractSirName(rawEntryRecord.recordValue) + "</surn>\n");
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "\t<givn>\"" + RecordProcessor.extractName(rawEntryRecord.recordValue) + "</givn>\n");
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "</name" + ">\n");
 
     }
 
     public void setSex() {
-        System.out.print(rawEntryRecord.totalTabs + "<sex>" + this.rawEntryRecord.recordValue + "<sex>\n");
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "<sex>" + this.rawEntryRecord.recordValue + "<sex>\n");
     }
 
     public void setOccupation() {
-        System.out.print(rawEntryRecord.totalTabs + "<occu>" + rawEntryRecord.recordValue + "</occu>\n");
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "<occu>" + rawEntryRecord.recordValue + "</occu>\n");
     }
 
     public void setTitle() {
-        System.out.print(rawEntryRecord.totalTabs + "<title>" + rawEntryRecord.recordValue + "</title>\n");
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "<title>" + rawEntryRecord.recordValue + "</title>\n");
     }
 
-    public void setBirthDetails() {
-        this.BIRTH_DETAILS = new HashMap<>();
-        System.out.print(rawEntryRecord.totalTabs + "<birth>\n");
+    private void setBirthDetails(String birthDetails) {
+
+        String[] birthDetailItems = birthDetails.split("\\r|\\r\\n|\\n");
+
+        RawEntryRecord lowLevelBirthData = new RawEntryRecord(birthDetailItems[0]);
+        XML_TAG.append(lowLevelBirthData.tabSpacedString + "<birth>\n");
+
+        for (String birthItem : birthDetailItems) {
+            String[] birthTokens = birthItem.split("\\s");
+
+            if (birthTokens[1].equalsIgnoreCase("date")) {
+                setDate(birthItem);
+            }
+            else if (birthTokens[1].equalsIgnoreCase("plac")) {
+                setPlace(birthItem);
+            }
+        }
+        XML_TAG.append(lowLevelBirthData.tabSpacedString + "</birth>\n");
     }
 
-    public void setPlace() {
-        System.out.print(rawEntryRecord.totalTabs + "<place>" + rawEntryRecord.recordValue + "</place>\n");
+    private void setPlace(String inputLine) {
+        RawEntryRecord lowLevelPlaceData = new RawEntryRecord(inputLine);
+        XML_TAG.append(lowLevelPlaceData.tabSpacedString + "<place>" + lowLevelPlaceData.recordValue + "</place>\n");
     }
 
-    public void setChan(){
-        System.out.print(rawEntryRecord.totalTabs + "<chan>\n");
+    private void setChan(String chanDetails) {
+        String[] chanDetailItems = chanDetails.split("\\r|\\r\\n|\\n");
+
+        RawEntryRecord lowLevelChanData = new RawEntryRecord(chanDetailItems[0]);
+
+        XML_TAG.append(lowLevelChanData.tabSpacedString + "<chan>\n");
+        setDate(chanDetailItems[1]);
+        XML_TAG.append(lowLevelChanData.tabSpacedString + "</chan>\n");
     }
 
-    public void setDate() {
-        System.out.print(rawEntryRecord.totalTabs + "<date>" + rawEntryRecord.recordValue + "</date>\n");
+    public void setDate(String inputLine) {
+        RawEntryRecord lowLevelDateRecord = new RawEntryRecord(inputLine);
+        XML_TAG.append(lowLevelDateRecord.tabSpacedString + "<date>" + lowLevelDateRecord.recordValue + "</date>\n");
     }
+
     public void setFamc() {
-        System.out.print(rawEntryRecord.totalTabs + "<famc>" + rawEntryRecord.recordValue + "</famc>\n");
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "<famc>" + rawEntryRecord.recordValue + "</famc>\n");
     }
 
     public void setFams() {
-        System.out.print(rawEntryRecord.totalTabs + "<fams>" + rawEntryRecord.recordValue + "</fams>\n");
-    }
-
-    public void setCham(String inChan) {
-        this.CHAN = inChan;
+        XML_TAG.append(rawEntryRecord.tabSpacedString + "<fams>" + rawEntryRecord.recordValue + "</fams>\n");
     }
 
 
     /**
      * Getters
      */
-    public String getId() {
-        return ID;
+    public String xmlTag() {
+        return this.XML_TAG.toString();
     }
 
-    public String getName() {
-        return this.NAME;
-    }
-
-    public String getSex() {
-        return this.SEX;
-    }
-
-    public String getTitle() {
-        return this.TITLE;
-    }
-
-    public HashMap<String, String> getBirthDetails() {
-        return BIRTH_DETAILS;
-    }
-
-    public String getFamc() {
-        return this.FAMC;
-    }
-
-    public String getFams() {
-        return this.FAMS;
-    }
-
-    public String getCham() {
-        return this.CHAN;
-    }
+//    public String getId() {
+//        return ID;
+//    }
+//
+//    public String getName() {
+//        return this.NAME;
+//    }
+//
+//    public String getSex() {
+//        return this.SEX;
+//    }
+//
+//    public String getTitle() {
+//        return this.TITLE;
+//    }
+//
+//    public HashMap<String, String> getBirthDetails() {
+//        return BIRTH_DETAILS;
+//    }
+//
+//    public String getFamc() {
+//        return this.FAMC;
+//    }
+//
+//    public String getFams() {
+//        return this.FAMS;
+//    }
+//
+//    public String getCham() {
+//        return this.CHAN;
+//    }
 
     /**
      * => Extract Record ID
