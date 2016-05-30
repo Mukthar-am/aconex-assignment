@@ -60,8 +60,4 @@ public class RecordProcessor {
     }
 
 
-    public static void main(String[] args) {
-        String input = "@I0110@";
-        System.out.println(extractId(input));
-    }
 }
