@@ -24,8 +24,13 @@ public class GedcomConverter implements AconexConverter {
         this.INPUT_FILE = input;
     }
 
-    public boolean convert() throws FileNotFoundException {
-        return doXML();
+    public boolean convert() throws FileNotFoundException, Exception {
+        if (new File(INPUT_FILE).length() == 0) {
+            System.out.println("# File is empty");
+            throw new Exception("# File empty exception.");
+        } else {
+            return doXML();
+        }
     }
 
 

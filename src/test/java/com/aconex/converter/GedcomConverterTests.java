@@ -17,7 +17,12 @@ public class GedcomConverterTests {
 
         String invalidInput = "/Users/mukthar.ahmed/Downloads/input.txt";
 
-        boolean converter = new GedcomConverter(invalidInput).convert();
+        boolean converter = false;
+        try {
+            converter = new GedcomConverter(invalidInput).convert();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println("# === " + converter);
         Assert.assertTrue(false);
     }
@@ -33,6 +38,8 @@ public class GedcomConverterTests {
             Assert.assertFalse(converterStatus);
 
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -50,7 +57,27 @@ public class GedcomConverterTests {
             System.out.println("# Return value: " + converterStatus);
             Assert.assertFalse(converterStatus);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test(groups = "converter-tests", expectedExceptions = Exception.class)
+    public void TestEmptyInputFile() {
+        //String nonReadableInput = "/Users/mukthar" +
+        String validInput = "com/acconex/test-data/empty.txt";
+
+        String filepath = this.getClass().getClassLoader().getResource(validInput).getFile().toString();
+        System.out.println("# Input file is not readable for the user = " + filepath);
+
+        try {
+            boolean converterStatus = new GedcomConverter(filepath).convert();
+            System.out.println("# Return value: " + converterStatus);
+            Assert.assertFalse(converterStatus);
+
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
