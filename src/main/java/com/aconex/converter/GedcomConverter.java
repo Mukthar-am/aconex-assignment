@@ -2,6 +2,7 @@ package com.aconex.converter;
 
 import com.aconex.binders.AconexConverter;
 import com.aconex.binders.XMLEntry;
+import com.aconex.utils.Utilities;
 
 import java.io.*;
 
@@ -11,6 +12,7 @@ import java.io.*;
 public class GedcomConverter implements AconexConverter {
 
     private String INPUT_FILE;
+    private String OUTPUT_FILE;
     /**
      * Input file to parse
      */
@@ -20,8 +22,9 @@ public class GedcomConverter implements AconexConverter {
      * thread safe writer
      */
 
-    public GedcomConverter(String input) {
+    public GedcomConverter(String input, String outfile) {
         this.INPUT_FILE = input;
+        this.OUTPUT_FILE = outfile;
     }
 
     public boolean convert() throws FileNotFoundException, Exception {
@@ -95,19 +98,22 @@ public class GedcomConverter implements AconexConverter {
 
         closeXML();     /** Close xml file object */
 
+        new Utilities().writeToFile(OUT_XML.toString(), OUTPUT_FILE);
+
         System.out.println(OUT_XML.toString());
+
         return isSuccessful;
     }
-
 
     private static String[] getLineSplits(String input) {
         return input.split("\\s");
     }
 
-
     public static void main(String[] args) {
         String inFile = "/Users/mukthar.ahmed/Downloads/aconex-coding-challenge/GEDCOM_Parser_Coding_Challenge/limited_data_set.txt";
-        GedcomConverter converter = new GedcomConverter(inFile);
+        String outfile = "/Users/mukthar.ahmed/Downloads/output/outfile.txt";
+
+        GedcomConverter converter = new GedcomConverter(inFile, outfile);
         try {
             converter.doXML();
 

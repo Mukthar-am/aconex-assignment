@@ -1,0 +1,69 @@
+<gedcom>
+	<indi id="@I1@">
+		<name value="Elizabeth Alexandra Mary /Windsor/>
+			<surn>"Windsor</surn>
+			<givn>"Elizabeth Alexandra Mary </givn>
+		</name>
+		<sex>F<sex>
+		<birth>
+			<date>21 Apr 1926</date>
+			<place>17 Bruton Street, London, W1</place>
+		</birth>
+		<occu>Queen</occu>
+		<famc>@F0003@</famc>
+		<fams>@F0001@</fams>
+		<note>@N0002@</note>
+	</indi>
+	<indi id="@I2@">
+		<name value="Philip /Mountbatten/>
+			<surn>"Mountbatten</surn>
+			<givn>"Philip </givn>
+		</name>
+		<sex>M<sex>
+		<birth>
+			<date>1921</date>
+		</birth>
+		<famc>@F0002@</famc>
+		<fams>@F0001@</fams>
+		<note>@N0001@</note>
+		<chan>
+			<date> 6 Mar 2004</date>
+		</chan>
+	</indi>
+	<indi id="@I3@">
+		<name value="Andrew>
+			<surn>"null</surn>
+			<givn>"null</givn>
+		</name>
+		<sex>M<sex>
+		<fams>@F0002@</fams>
+		<note>@N0013@</note>
+		<chan>
+			<date> 6 Mar 2004</date>
+		</chan>
+	</indi>
+	<indi id="@I4@">
+		<name value="Alice>
+			<surn>"null</surn>
+			<givn>"null</givn>
+		</name>
+		<sex>F<sex>
+		<fams>@F0002@</fams>
+	</indi>
+	<indi id="@I5@">
+		<name value="George VI>
+			<surn>"null</surn>
+			<givn>"null</givn>
+		</name>
+		<sex>M<sex>
+		<birth>
+			<date>1895</date>
+		</birth>
+		<famc>@F0005@</famc>
+		<fams>@F0003@</fams>
+		<note>@N0004@</note>
+		<chan>
+			<date>13 Dec 2003</date>
+		</chan>
+	</indi>
+</gedcom>

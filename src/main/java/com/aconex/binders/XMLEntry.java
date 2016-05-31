@@ -100,6 +100,9 @@ public class XMLEntry {
             "\t<" + rawEntryRecord.recordValue.toLowerCase()
                 + " id=\"@I" + this.ID + "@\">\n"
         );
+
+        this.ID = (
+            "<" + rawEntryRecord.recordValue.toLowerCase() + " id=\"@I" + extractId(rawEntryRecord.recordKey) + "@\">\n");
     }
 
     private void setNote() {

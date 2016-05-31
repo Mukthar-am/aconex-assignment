@@ -1,0 +1,19 @@
+<gedcom>
+	<indi id="@I1@">
+		<name value="Elizabeth Alexandra Mary /Windsor/>
+			<surn>"Windsor</surn>
+			<givn>"Elizabeth Alexandra Mary </givn>
+		</name>
+		<sex>F<sex>
+		<birth>
+			<date>21 Apr 1926</date>
+		</birth>
+		<occu>Queen</occu>
+		<famc>@F0003@</famc>
+		<fams>@F0001@</fams>
+		<note>@N0002@</note>
+		<chan>
+			<date>13 Dec 2003</date>
+		</chan>
+	</indi>
+</gedcom>
